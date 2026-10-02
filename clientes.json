@@ -1,0 +1,12 @@
+[
+  {
+    "codigo": "C001",
+    "nombre": "Orly",
+    "tramite": "Consulta"
+  },
+  {
+    "codigo": "C002",
+    "nombre": "Ana",
+    "tramite": "Pago"
+  }
+]

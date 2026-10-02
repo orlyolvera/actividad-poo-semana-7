@@ -1,18 +1,28 @@
 from cola import Cola
 from modelos import Cliente
-
+from persistencia import cargar_clientes, guardar_clientes
 
 class ClienteRepository:
-    """Repository que separa el manejo de datos de la lógica principal."""
-
-    def __init__(self):
+    def __init__(self, archivo=None):
         self._cola = Cola()
+        self._archivo = archivo
+        if archivo:
+            for cliente in cargar_clientes(archivo):
+                self._cola.agregar(cliente)
+
+    def _guardar(self):
+        if self._archivo:
+            guardar_clientes(self._archivo, self.listar_clientes())
 
     def agregar_cliente(self, cliente: Cliente):
         self._cola.agregar(cliente)
+        self._guardar()
 
     def atender_cliente(self):
-        return self._cola.eliminar()
+        cliente = self._cola.eliminar()
+        if cliente is not None:
+            self._guardar()
+        return cliente
 
     def siguiente_cliente(self):
         return self._cola.consultar_siguiente()
@@ -26,9 +36,7 @@ class ClienteRepository:
     def listar_clientes(self):
         clientes = []
         actual = self._cola.frente
-
         while actual is not None:
             clientes.append(actual.dato)
             actual = actual.siguiente
-
         return clientes
